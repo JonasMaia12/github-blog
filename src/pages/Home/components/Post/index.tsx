@@ -1,22 +1,21 @@
+import { IPost } from "../.."
+import { relativeDateFormatter } from "../../../../utils/formatter"
 import { PostContainer } from "./styles"
 
-export function Post() {
+interface PostProps {
+  post: IPost
+}
+
+export function Post({ post }: PostProps) {
+  const formattedDate = relativeDateFormatter(post.createdAt)
+
   return (
-    <PostContainer to="/post/1">
+    <PostContainer to={`/post/${post.number}`}>
       <div>
-        <strong>
-          JavaScript data types and data structures JavaScript data types and
-          data structures
-        </strong>
-        <span>Há 1 dia</span>
+        <strong>{post.title}</strong>
+        <span>{formattedDate}</span>
       </div>
-      <p>
-        Aprenda sobre os principais tipos de dados em JavaScript, como strings,
-        números, boleanos, objetos e arrays. Aprenda sobre os principais tipos
-        de dados em JavaScript, como strings, números, boleanos, objetos e
-        arrays. Aprenda sobre os principais tipos de dados em JavaScript, como
-        strings, números, boleanos, objetos e arrays.
-      </p>
+      <p>{post.body}</p>
     </PostContainer>
   )
 }

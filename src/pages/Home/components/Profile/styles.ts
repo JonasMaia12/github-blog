@@ -42,12 +42,12 @@ export const ProfileDetails = styled.div`
     align-items: center;
     gap: 1.5rem;
     flex-wrap: wrap;
+    margin-top: auto;
 
     li {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-top: auto;
 
       svg {
         width: 1.125rem;

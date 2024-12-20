@@ -3,35 +3,79 @@ import { ExternalLink } from "../../../../components/ExternalLink"
 import { ProfileContainer, ProfileDetails, ProfilePicture } from "./styles"
 import { faGithub } from "@fortawesome/free-brands-svg-icons"
 import { faBuilding, faUserGroup } from "@fortawesome/free-solid-svg-icons"
+import { useCallback, useEffect, useState } from "react"
+import { api } from "../../../../lib/axios"
+import { Spinner } from "../../../../components/Spinner"
+
+const username = import.meta.env.VITE_GITHUB_USERNAME
+
+interface ProfileData {
+  login: string
+  bio: string
+  avatar_url: string
+  html_url: string
+  name: string
+  company?: string
+  followers: number
+}
 
 export function Profile() {
+  const [profileData, setProfileData] = useState<ProfileData>({} as ProfileData)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const getProfileData = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const response = await api.get(`/users/${username}`)
+
+      setProfileData(response.data)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [profileData])
+
+  useEffect(() => {
+    getProfileData()
+  }, [])
+
   return (
     <ProfileContainer>
-      <ProfilePicture src="https://github.com/JonasMaia12.png" />
-      <ProfileDetails>
-        <header>
-          <h1>Jonas Maia</h1>
-          <ExternalLink text="Github" href="#" />
-        </header>
-        <p>
-          I'm a software engineer with a passion for creating beautiful and
-          efficient user interfaces. I'm currently working remotely on a project
-          that involves designing and implementing a new digital platform.
-        </p>
-        <ul>
-          <li>
-            <FontAwesomeIcon icon={faGithub} />
-            JonasMaia12
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faBuilding} />
-            Freelancer
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faUserGroup} />3 seguidores
-          </li>
-        </ul>
-      </ProfileDetails>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <ProfilePicture src={profileData.avatar_url} />
+          <ProfileDetails>
+            <header>
+              <h1>{profileData.name}</h1>
+              <ExternalLink
+                text="Github"
+                href={profileData.html_url}
+                target="_blank"
+              />
+            </header>
+            <p>{profileData.bio}</p>
+            <ul>
+              <li>
+                <FontAwesomeIcon icon={faGithub} />
+                {profileData.login}
+              </li>
+
+              {profileData?.company && (
+                <li>
+                  <FontAwesomeIcon icon={faBuilding} />
+                  {profileData.company}
+                </li>
+              )}
+
+              <li>
+                <FontAwesomeIcon icon={faUserGroup} />
+                {profileData.followers} seguidores
+              </li>
+            </ul>
+          </ProfileDetails>
+        </>
+      )}
     </ProfileContainer>
   )
 }
