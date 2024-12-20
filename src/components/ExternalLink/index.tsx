@@ -7,6 +7,7 @@ type ExternalLinkProps = ComponentProps<typeof ExternalLinkContainer> & {
   text: string
   icon?: ReactNode
   variant?: "iconLeft"
+  as?: React.ElementType
 }
 
 export function ExternalLink({ text, icon, ...rest }: ExternalLinkProps) {
